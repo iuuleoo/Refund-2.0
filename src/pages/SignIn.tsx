@@ -1,22 +1,26 @@
-import { useState } from "react";
+import { useActionState } from "react";
 import { Input } from "../components/Input";
 import { Button } from "../components/Button";
 
 export function SignIn() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [state, formAction, isLoading] = useActionState(signIn, null)
 
-  function onAction(formData: FormData) {
-    console.log(formData.get("email"));
+  async function signIn(prevState: any, formData: FormData) {
+    const email = formData.get("email")
+    const password = formData.get("password")
+
+    return { email, password }
   }
 
   return (
-    <form action={onAction} className="w-full flex flex-col gap-4">
+    <form action={formAction} className="w-full flex flex-col gap-4">
       <Input
         name="email"
         required
         legend="E-mail"
         type="email"
         placeholder="seu@email.com"
+        defaultValue={String(state?.email)}
       />
       <Input
         name="password"
@@ -24,6 +28,7 @@ export function SignIn() {
         legend="Senha"
         type="password"
         placeholder="password"
+        defaultValue={String(state?.password)}
       />
 
       <Button type="submit" isLoading={isLoading}>
