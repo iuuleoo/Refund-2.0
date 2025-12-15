@@ -1,6 +1,18 @@
 import { useState } from "react";
+import { z, ZodError } from "zod";
+
 import { Input } from "../components/Input";
 import { Button } from "../components/Button";
+
+const SignUpSchema = z.object({
+  name: z.string().trim().min(1, { message: "Informe o nome"}),
+  email: z.string().email({ message: "E-mail inválido" }),
+  password: z.string().min(6, { message: "Senha deverá ter no mínimo 6 caracteres" }),
+  passwordConfirm: z.string({ message: "confirme a senha"}),
+}).refine(( data ) => data.password === data.passwordConfirm, {
+  message: "As senhas são iguais",
+  path: ["passwordConfirm"],
+})
 
 export function SignUp() {
   const [name, setName] = useState("");
@@ -12,7 +24,26 @@ export function SignUp() {
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    console.log(name, email, password, passwordConfirm);
+    try {
+      setIsLoading(true)
+
+      const data = SignUpSchema.parse({
+        name,
+        email,
+        password,
+        passwordConfirm,
+      })
+
+    } catch (error) {
+      if(error instanceof ZodError) {
+        return alert(error.issues[0].message);
+    }
+
+    alert("Erro ao cadastrar usuário");
+    } finally {
+      setIsLoading(false);
+    }
+
   }
 
   return (
@@ -36,7 +67,7 @@ export function SignUp() {
         required
         legend="Senha"
         type="password"
-        placeholder="123456"
+        placeholder="password"
         onChange={(e) => setPassword(e.target.value)}
       />
 
@@ -44,7 +75,7 @@ export function SignUp() {
         required
         legend="Confirmação da Senha"
         type="password"
-        placeholder="123456"
+        placeholder="password"
         onChange={(e) => setPasswordConfirm(e.target.value)}
       />
 
