@@ -71,7 +71,7 @@ export function Dashboard() {
 
    useEffect(() => {
     fetchRefunds()
-  }, [])
+  }, [page])
 
 
   return (
