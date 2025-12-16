@@ -12,7 +12,7 @@ import { Button } from "../components/Button";
 import { Pagination } from "../components/Pagination";
 import { RefundItem, RefundItemProps } from "../components/RefundItem";
 
-const PER_PAGE = 5
+const PER_PAGE = 4
 
 export function Dashboard() {
   const [name, setName] = useState("");
